@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>体組成計 インサイト調査 設計レポート</title>
+<style>
+:root {
+  --primary: #2D6A4F;
+  --primary-light: #52B788;
+  --primary-pale: #D8F3DC;
+  --accent: #F4845F;
+  --accent-light: #FDE8DF;
+  --tier1: #E63946;
+  --tier1-bg: #FFF0F0;
+  --tier2: #457B9D;
+  --tier2-bg: #EBF4FA;
+  --tier3: #B5860D;
+  --tier3-bg: #FEFAE0;
+  --tier4: #6B5B7B;
+  --tier4-bg: #F3F0F5;
+  --bg: #F8F9FA;
+  --text: #1B1B2F;
+  --muted: #6C757D;
+  --card-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+}
+
+/* ===== HERO ===== */
+.hero {
+  background: linear-gradient(135deg, #1B4332 0%, #2D6A4F 50%, #52B788 100%);
+  color: white;
+  padding: 64px 40px 56px;
+  text-align: center;
+}
+.hero .badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 20px;
+  padding: 4px 16px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  margin-bottom: 20px;
+}
+.hero h1 {
+  font-size: clamp(22px, 4vw, 38px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+.hero p {
+  font-size: 15px;
+  opacity: 0.85;
+  max-width: 560px;
+  margin: 0 auto 24px;
+}
+.hero-meta {
+  display: inline-flex;
+  gap: 24px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 12px;
+  padding: 12px 28px;
+  font-size: 13px;
+}
+.hero-meta span { opacity: 0.8; }
+.hero-meta strong { display: block; font-size: 16px; opacity: 1; }
+
+/* ===== SECTION ===== */
+.section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 60px 24px;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 36px;
+}
+.section-number {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  font-size: 18px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.section-title {
+  font-size: clamp(20px, 3vw, 26px);
+  font-weight: 800;
+  color: var(--text);
+}
+.section-subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+.sub-title {
+  font-size: 17px;
+  font-weight: 800;
+  margin-bottom: 18px;
+  color: var(--text);
+}
+
+.divider {
+  border: none;
+  border-top: 2px solid #E9ECEF;
+  margin: 0;
+}
+
+/* ===== CALLOUT ===== */
+.callout {
+  background: var(--primary-pale);
+  border-left: 5px solid var(--primary);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 18px 22px;
+  margin-bottom: 28px;
+  font-size: 14px;
+}
+.callout strong { color: var(--primary); }
+.callout-warn {
+  background: var(--accent-light);
+  border-left-color: var(--accent);
+}
+.callout-warn strong { color: var(--accent); }
+
+/* ===== HOMEWORK BOX ===== */
+.homework-box {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  padding: 28px 32px;
+  margin-bottom: 36px;
+  border-top: 4px solid var(--primary);
+}
+.homework-box h3 {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+}
+.homework-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  align-items: flex-start;
+}
+.hw-label {
+  font-weight: 700;
+  color: var(--muted);
+  min-width: 72px;
+  flex-shrink: 0;
+  font-size: 12px;
+  padding-top: 2px;
+}
+.hw-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--bg);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.hw-step-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ===== FLOW DIAGRAM ===== */
+.flow-wrap {
+  display: flex;
+  flex-direction: column;
+  max-width: 700px;
+  margin: 0 auto 40px;
+}
+.flow-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px 24px;
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  position: relative;
+}
+.flow-step + .flow-step { margin-top: 8px; }
+.flow-step.current {
+  border: 2.5px solid var(--primary);
+  background: var(--primary-pale);
+}
+.flow-step.done { opacity: 0.6; }
+.flow-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.icon-done { background: #DEE2E6; }
+.icon-current { background: var(--primary); }
+.icon-next { background: #E9ECEF; }
+.flow-body h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.flow-body p { font-size: 13px; color: var(--muted); }
+.flow-tag {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.tag-done { background: #DEE2E6; color: #495057; }
+.tag-now  { background: var(--primary); color: white; }
+.tag-next { background: #E9ECEF; color: #868E96; }
+.flow-arrow {
+  text-align: center;
+  font-size: 20px;
+  color: var(--primary-light);
+  padding: 2px 0;
+}
+
+/* ===== SCREENING TABLE ===== */
+.screen-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  font-size: 14px;
+  margin-bottom: 28px;
+}
+.screen-table th {
+  background: var(--primary);
+  color: white;
+  padding: 13px 18px;
+  text-align: left;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+.screen-table td {
+  padding: 13px 18px;
+  border-bottom: 1px solid #F1F3F5;
+  vertical-align: top;
+}
+.screen-table tr:last-child td { border-bottom: none; }
+.screen-table tr:nth-child(even) td { background: #FAFAFA; }
+.check { color: var(--primary); font-weight: 700; }
+.cross  { color: var(--accent);  font-weight: 700; }
+
+/* ===== JTBD ===== */
+.jtbd-flow {
+  display: flex;
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+.jtbd-col {
+  flex: 1;
+  padding: 24px 22px;
+}
+.jtbd-col + .jtbd-col { border-left: 1px solid #F1F3F5; }
+.jtbd-col h4 {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+.jtbd-col p  { font-size: 13px; margin-bottom: 8px; }
+.jtbd-col ul { padding-left: 16px; font-size: 13px; }
+.jtbd-col ul li { margin-bottom: 6px; }
+.jtbd-col.highlight { background: var(--primary-pale); }
+.jtbd-col.highlight h4 { color: var(--primary); }
+
+/* ===== 整理方法カード ===== */
+.method-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.method-card {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+.method-card-head {
+  padding: 16px 20px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.method-verdict {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.verdict-ng  { background: #FFF0F0; color: var(--tier1); }
+.verdict-ok  { background: var(--primary-pale); color: var(--primary); }
+.method-icon { font-size: 22px; }
+.method-name { font-size: 15px; font-weight: 800; }
+.method-card-body { padding: 0 20px 20px; font-size: 13px; }
+.method-card-body p { margin-bottom: 8px; color: var(--muted); }
+.method-pros-cons { display: flex; flex-direction: column; gap: 6px; }
+.pros-cons-row { display: flex; gap: 8px; align-items: flex-start; }
+.pros-cons-label {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.label-pro  { background: var(--primary-pale); color: var(--primary); }
+.label-con  { background: var(--accent-light); color: var(--accent); }
+.pros-cons-text { font-size: 13px; }
+
+/* ===== TIER LABEL ===== */
+.tier-block { margin-bottom: 52px; }
+.tier-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 18px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  letter-spacing: 0.04em;
+}
+.tier1-label { background: var(--tier1-bg); color: var(--tier1); border: 1.5px solid var(--tier1); }
+.tier2-label { background: var(--tier2-bg); color: var(--tier2); border: 1.5px solid var(--tier2); }
+.tier3-label { background: var(--tier3-bg); color: var(--tier3); border: 1.5px solid var(--tier3); }
+.tier4-label { background: var(--tier4-bg); color: var(--tier4); border: 1.5px solid var(--tier4); }
+
+/* ===== PERSONA GRID ===== */
+.persona-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+.persona-card {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.persona-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+}
+.card-header {
+  padding: 16px 20px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.card-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.t1-av { background: var(--tier1-bg); }
+.t2-av { background: var(--tier2-bg); }
+.t3-av { background: var(--tier3-bg); }
+.t4-av { background: var(--tier4-bg); }
+.card-meta { flex: 1; min-width: 0; }
+.card-id {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.card-name {
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+.card-body { padding: 0 20px 20px; }
+.card-profile {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #F1F3F5;
+}
+.card-trigger { font-size: 13px; margin-bottom: 8px; }
+.card-trigger span { font-weight: 700; color: var(--primary); }
+.card-insight {
+  font-size: 13px;
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-style: italic;
+  line-height: 1.6;
+}
+.card-insight::before { content: '💬 '; }
+.card-note {
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ===== AXIS GRID ===== */
+.axis-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 40px;
+}
+@media (max-width: 680px) { .axis-grid { grid-template-columns: 1fr; } }
+.axis-card {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  padding: 20px;
+}
+.ax-num {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  margin-bottom: 6px;
+}
+.ax-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 10px;
+}
+.ax-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.ax-tag {
+  font-size: 12px;
+  background: var(--primary-pale);
+  color: var(--primary);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+/* ===== SEGMENT GRID ===== */
+.seg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+.seg-card {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+.seg-head {
+  padding: 18px 22px 14px;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.seg-id {
+  font-size: 32px;
+  font-weight: 900;
+  opacity: 0.9;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.seg-label { font-size: 11px; opacity: 0.8; letter-spacing: 0.08em; }
+.seg-title { font-size: 16px; font-weight: 800; line-height: 1.3; }
+.seg-body { padding: 18px 22px; }
+.seg-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  align-items: flex-start;
+}
+.seg-lbl {
+  font-weight: 700;
+  color: var(--muted);
+  min-width: 72px;
+  flex-shrink: 0;
+  font-size: 12px;
+  padding-top: 1px;
+}
+.priority-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 20px;
+  margin-top: 8px;
+}
+.p-high   { background: var(--tier1-bg); color: var(--tier1); }
+.p-mid    { background: var(--tier2-bg); color: var(--tier2); }
+.p-design { background: var(--tier4-bg); color: var(--tier4); }
+.seg-personas {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #F1F3F5;
+}
+.seg-p-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+/* ===== MAP TABLE ===== */
+.map-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  font-size: 13px;
+}
+.map-table th {
+  background: var(--primary);
+  color: white;
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+}
+.map-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #F1F3F5;
+  vertical-align: middle;
+}
+.map-table tr:last-child td { border-bottom: none; }
+.map-table tr:nth-child(even) td { background: #FAFAFA; }
+.tier-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+.dot-t1 { background: var(--tier1); }
+.dot-t2 { background: var(--tier2); }
+.dot-t3 { background: var(--tier3); }
+.dot-t4 { background: var(--tier4); }
+
+/* ===== FOOTER ===== */
+.footer {
+  background: var(--text);
+  color: rgba(255,255,255,0.6);
+  text-align: center;
+  padding: 36px 24px;
+  font-size: 13px;
+}
+.footer strong { color: white; }
+
+@media (max-width: 640px) {
+  .jtbd-flow { flex-direction: column; }
+  .jtbd-col + .jtbd-col { border-left: none; border-top: 1px solid #F1F3F5; }
+  .hero { padding: 40px 20px; }
+  .section { padding: 40px 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<div class="hero">
+  <div class="badge">INSIGHT RESEARCH DESIGN — 体組成計</div>
+  <h1>インサイト調査 設計レポート<br><span style="font-weight:400; font-size:0.7em; opacity:0.85;">仮説ペルソナ・調査セグメント・対象者設定の考え方</span></h1>
+  <p>非専門家向け共通認識ドキュメント。このレポートは調査設計フェーズの出発点です。</p>
+  <div class="hero-meta">
+    <div><span>仮説ペルソナ</span><strong>18名</strong></div>
+    <div><span>調査セグメント</span><strong>S1〜S5</strong></div>
+    <div><span>フェーズ</span><strong>調査設計中</strong></div>
+  </div>
+</div>
+
+<!-- ===== SECTION 1: 宿題の背景 ===== -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">1</div>
+    <div>
+      <div class="section-title">このレポートの背景</div>
+      <div class="section-subtitle">宿題の目的と、今回取り組んだこと</div>
+    </div>
+  </div>
+
+  <div class="homework-box">
+    <h3>📋 宿題の内容</h3>
+    <div class="homework-row">
+      <div class="hw-label">目的</div>
+      <div>インサイト調査の第一歩として、<strong>インサイト調査対象者の整理・分類</strong>を行うため</div>
+    </div>
+    <div class="homework-row">
+      <div class="hw-label">内容</div>
+      <div>インサイト調査対象者の整理の仕方を考えてくる</div>
+    </div>
+    <div style="margin-top: 16px;">
+      <div class="hw-step">
+        <div class="hw-step-num">1</div>
+        <div>インサイト調査対象者を<strong>列挙</strong>してみる<br><span style="color:var(--muted); font-size:12px;">※ インサイト調査対象者 ＝ 全人類（その人がどんな分類の人なのか？を意識する）</span></div>
+      </div>
+      <div class="hw-step">
+        <div class="hw-step-num">2</div>
+        <div>列挙した対象者の<strong>整理の仕方</strong>を考える<br><span style="color:var(--muted); font-size:12px;">例：ベン図？ Yes/Noチャート？ セグメント分類？</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>今回の取り組み方：</strong>
+    まず「どんな人が体組成計を買うか・使うか」を想像で列挙することから始めました（ステップ1）。次に、その列挙結果をどう整理するかを複数の方法で検討し、最も実用的な分類方法を選びました（ステップ2）。
+  </div>
+
+  <div class="callout callout-warn">
+    <strong>⚠️ 重要な前提：</strong>
+    今回作ったペルソナは「調査の成果物」ではなく、<strong>調査設計の出発点となる仮説</strong>です。「こういう人がいるかもしれない」という想像であり、事実ではありません。この区別を共通認識として持っておくことが重要です。
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ===== SECTION 2: 今どこにいるか ===== -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">2</div>
+    <div>
+      <div class="section-title">インサイト調査の全体地図と現在地</div>
+      <div class="section-subtitle">ペルソナと調査の正しい関係を理解する</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>よく混同されること：</strong>
+    「ペルソナを作ればインサイトがわかる」と思われがちですが、本来の順序は逆です。<strong>インタビュー・調査をして初めて、事実に基づくペルソナが作れます。</strong>今回は調査前に仮説ペルソナを作ることから始めました。これは「仮説ペルソナ先行アプローチ」と呼ばれ、調査設計の出発点として有効ですが、あくまで仮説です。
+  </div>
+
+  <div class="flow-wrap">
+    <div class="flow-step done">
+      <div class="flow-icon icon-done">✅</div>
+      <div class="flow-body">
+        <h4>STEP 1｜仮説ペルソナの作成（宿題ステップ1）</h4>
+        <p>「こういう人がいるかもしれない」という想像上の顧客像を18パターン列挙。調査設計の出発点として機能する。</p>
+      </div>
+      <span class="flow-tag tag-done">完了（仮説）</span>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-step current">
+      <div class="flow-icon icon-current">📐</div>
+      <div class="flow-body">
+        <h4>STEP 2｜調査設計（宿題ステップ2・今ここ）</h4>
+        <p>列挙した対象者をどう整理・分類するかを検討し、実際に調査で使えるセグメントに落とし込む。</p>
+      </div>
+      <span class="flow-tag tag-now">現在地</span>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-step">
+      <div class="flow-icon icon-next">🎤</div>
+      <div class="flow-body">
+        <h4>STEP 3｜インタビュー・調査の実施</h4>
+        <p>実際の購入者・使用者から生の声を集める。定性インタビューまたは定量アンケート、あるいは両方。</p>
+      </div>
+      <span class="flow-tag tag-next">次のステップ</span>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-step">
+      <div class="flow-icon icon-next">💡</div>
+      <div class="flow-body">
+        <h4>STEP 4｜インサイトの発見・ペルソナの確定</h4>
+        <p>集めたデータからパターンを見つけ、「本当の顧客像」を確定する。ここで初めてペルソナが事実に基づくものになる。</p>
+      </div>
+      <span class="flow-tag tag-next">次のステップ</span>
+    </div>
+  </div>
+
+  <div class="callout callout-warn">
+    <strong>⚠️ 確証バイアスに注意：</strong>
+    仮説ペルソナを「これが顧客だ」と断言して施策に使うのは危険です。自分の思い込みを確認するだけの調査（確証バイアス）に陥りやすくなります。仮説はあくまで「問いを立てるための道具」として使いましょう。
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ===== SECTION 3: 整理の仕方の検討 ===== -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">3</div>
+    <div>
+      <div class="section-title">整理の仕方の検討（宿題ステップ2）</div>
+      <div class="section-subtitle">候補を比較検討し、最適な分類方法を選ぶ</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>このセクションの目的：</strong>
+    列挙した18名の仮説ペルソナを「どう整理するか」を考えます。ベン図・Yes/Noチャート・属性分類など複数の候補を検討し、なぜ「行動事実ベースの分類」が最も実用的かを示します。
+  </div>
+
+  <h3 class="sub-title">候補の比較検討</h3>
+
+  <div class="method-grid">
+
+    <div class="method-card">
+      <div class="method-card-head">
+        <div class="method-icon">👤</div>
+        <div class="method-name">候補A：属性軸で分類</div>
+        <span class="method-verdict verdict-ng">採用しない</span>
+      </div>
+      <div class="method-card-body">
+        <p>年齢・性別・職業などの静的なプロフィール情報で分類する方法。</p>
+        <div class="method-pros-cons">
+          <div class="pros-cons-row">
+            <span class="pros-cons-label label-pro">利点</span>
+            <span class="pros-cons-text">直感的でわかりやすい。リクルートの条件にしやすい。</span>
+          </div>
+          <div class="pros-cons-row">
+            <span class="pros-cons-label label-con">限界</span>
+            <span class="pros-cons-text">同じ「30代女性」でも購買動機はまったく異なる。属性だけでは「なぜ買ったか」が見えない。インサイトが混在して比較できなくなる。</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-card-head">
+        <div class="method-icon">🔀</div>
+        <div class="method-name">候補B：Yes/Noチャート</div>
+        <span class="method-verdict verdict-ng">採用しない</span>
+      </div>
+      <div class="method-card-body">
+        <p>「体組成計を持っているか？」「今も使っているか？」などの質問で分岐させる方法。</p>
+        <div class="method-pros-cons">
+          <div class="pros-cons-row">
+            <span class="pros-cons-label label-pro">利点</span>
+            <span class="pros-cons-text">分岐が明確で個別ケースを追いやすい。フロー図として可視化しやすい。</span>
+          </div>
+          <div class="pros-cons-row">
+            <span class="pros-cons-label label-con">限界</span>
+            <span class="pros-cons-text">分岐が増えると急速に複雑化する。「どのパターンがどれくらい多いか」が比較しにくい。調査設計の軸としてスケールしない。</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-card-head">
+        <div class="method-icon">⭕</div>
+        <div class="method-name">候補C：ベン図</div>
+        <span class="method-verdict verdict-ng">採用しない</span>
+      </div>
+      <div class="method-card-body">
+        <p>「健康意識が高い人」「ジム通い」「持病あり」などの集合の重なりを示す方法。</p>
+        <div class="method-pros-cons">
+          <div class="pros-cons-row">
+            <span class="pros-cons-label label-pro">利点</span>
+            <span class="pros-cons-text">条件の「重なり」を視覚的に伝えられる。複数条件を同時に満たす層を示せる。</span>
+          </div>
+          <div class="pros-cons-row">
+            <span class="pros-cons-label label-con">限界</span>
+            <span class="pros-cons-text">3〜4条件が限界で、それ以上は描けなくなる。「重なっている人が実際に何をしているか」が見えない。意識・態度ベースになりがちで行動事実と乖離する。</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-card-head">
+        <div class="method-icon">✅</div>
+        <div class="method-name">推奨：行動事実ベースの3軸分類</div>
+        <span class="method-verdict verdict-ok">採用</span>
+      </div>
+      <div class="method-card-body">
+        <p>「何をしたか・何が起きたか」という行動の事実で分類する方法。</p>
+        <div class="method-pros-cons">
+          <div class="pros-cons-row">
+            <span class="pros-cons-label label-pro">利点</span>
+            <span class="pros-cons-text">事実なので確認・検証が可能。リクルーティング条件に直接使える。「なぜ買ったか」「なぜ使い続けるか」の問いに接続しやすい。</span>
+          </div>
+          <div class="pros-cons-row">
+            <span class="pros-cons-label label-pro">利点</span>
+            <span class="pros-cons-text">属性情報は後から補助レイヤーとして重ねられる。仮説ペルソナの検証にも使える。</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <h3 class="sub-title">対象者設定の原則：「属性」ではなく「行動事実」で選ぶ</h3>
+
+  <table class="screen-table">
+    <thead>
+      <tr>
+        <th style="width:22%">選び方</th>
+        <th style="width:30%">例</th>
+        <th>問題点 / 利点</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="cross">✗</span> 属性ベース</td>
+        <td>30代・女性・健康意識高め</td>
+        <td>同じ属性でも購買動機・使用状況がバラバラ。インサイトが混在して見えにくくなる</td>
+      </tr>
+      <tr>
+        <td><span class="cross">✗</span> 意識・態度ベース</td>
+        <td>「健康に気を使っている人」</td>
+        <td>自己申告に頼るため実際の行動と乖離しやすい。誰でも「気を使っている」と答える</td>
+      </tr>
+      <tr>
+        <td><span class="check">✓</span> 行動事実ベース</td>
+        <td>「過去1年以内に体組成計を購入した」「購入後3ヶ月以上使っていない」</td>
+        <td>事実なので確認可能。同じ行動をした人を集めることで、比較可能なインサイトが得られる</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 class="sub-title">Jobs-to-be-Done（JTBD）はどこで使うか</h3>
+
+  <div class="jtbd-flow">
+    <div class="jtbd-col">
+      <h4>JTBDとは</h4>
+      <p>「人は製品を買うのではなく、ある<strong>仕事（ジョブ）</strong>を片付けるために製品を雇う」という考え方。</p>
+      <p style="font-size:12px; color:var(--muted);">例：体組成計を買った人の本当のジョブは「体重を測る」ではなく「健康診断の結果を受けて、自分の体を可視化して不安を解消したい」かもしれない。</p>
+    </div>
+    <div class="jtbd-col">
+      <h4>対象者選定には使いにくい理由</h4>
+      <ul>
+        <li>ジョブは「調査してみて初めてわかる」もの</li>
+        <li>調査前に「このジョブを持つ人を集める」と決めると、仮説の自己確認になる</li>
+        <li>リクルーティング条件（年齢・状況・行動事実）に変換しにくい</li>
+      </ul>
+    </div>
+    <div class="jtbd-col highlight">
+      <h4>✅ JTBDが本領を発揮する場面</h4>
+      <ul>
+        <li>インタビューで「なぜ買ったか」を深掘りする質問設計</li>
+        <li>「何と競合していたか（代替手段は何か）」を探る</li>
+        <li>調査後のインサイト整理・ペルソナ確定の段階</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>役割分担のまとめ：</strong>
+    対象者を<strong>選ぶ</strong>ときは「行動事実」、対象者に<strong>何を聞くか</strong>を設計するときに「JTBD」を使う。この組み合わせが実務の基本です。
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ===== SECTION 4: 仮説ペルソナ集 ===== -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">4</div>
+    <div>
+      <div class="section-title">仮説ペルソナ集（18名）</div>
+      <div class="section-subtitle">宿題ステップ1「対象者の列挙」の結果——すべて仮説です</div>
+    </div>
+  </div>
+
+  <div class="callout callout-warn">
+    <strong>⚠️ 読む際の注意：</strong>
+    これらは「実在する顧客」ではなく、「こういう人がいるかもしれない」という仮説です。TIER 1ほど調査優先度が高く、TIER 4は施策設計ではなくUX・倫理設計のための参照用です。
+  </div>
+
+  <!-- TIER 1 -->
+  <div class="tier-block">
+    <div class="tier-label tier1-label">● TIER 1｜高優先度コアターゲット（#1〜#5）</div>
+    <div class="persona-grid">
+
+      <div class="persona-card">
+        <div class="card-header">
+          <div class="card-avatar t1-av">🏥</div>
+          <div class="card-meta">
+            <div class="card-id">#01 · TIER 1</div>
+            <div class="card-name">健診ショック後の危機感型</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-profile">40代男性・会社員・健康診断で要再検査</div>
+          <div class="card-trigger"><span>購入トリガー：</span>健康診断の結果を受けて危機感</div>
+          <div class="card-insight">「数値が悪かった。何かしなきゃと思って買った」</div>
+        </div>
+      </div>
+
+      <div class="persona-card">
+        <div class="card-header">
+          <div class="card-avatar t1-av">🤱</div>
+          <div class="card-meta">
+            <div class="card-id">#02 · TIER 1</div>
+            <div class="card-name">産後リカバリー型</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-profile">30代女性・育児中・産後の体型変化が気になる</div>
+          <div class="card-trigger"><span>購入トリガー：</span>出産という人生イベント</div>
+          <div class="card-insight">「体重だけじゃなく、体脂肪も戻したくて」</div>
+        </div>
+      </div>
+
+      <div class="persona-card">
+        <div class="card-header">
+          <div class="card-avatar t1-av">💪</div>
+          <div class="card-meta">
+            <div class="card-id">#03 · TIER 1</div>
+            <div class="card-name">筋トレ・ボディメイク型</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-profile">20〜30代・ジム通い・体組成の変化を数値で追いたい</div>
+          <div class="card-trigger"><span>購入トリガー：</span>トレーニング開始・目標設定</div>
+          <div class="card-insight">「体重より筋肉量と体脂肪率が知りたい」</div>
+        </div>
+      </div>
+
+      <div class="persona-card">
+        <div class="card-header">
+          <div class="card-avatar t1-av">🩺</div>
+          <div class="card-meta">
+            <div class="card-id">#04 · TIER 1</div>
+            <div class="card-name">慢性疾患セルフ管理型</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-profile">50代・糖尿病・高血圧などの既往歴あり</div>
+          <div class="card-trigger"><span>購入トリガー：</span>医師の指導・疾患管理の必要性</div>
+          <div class="card-insight">「先生に体重管理しろって言われて。記録が必要で」</div>
+        </div>
+      </div>
+
+      <div class="persona-card">
+        <div class="card-header">
+          <div class="card-avatar t1-av">📊</div>
+          <div class="card-meta">
+            <div class="card-id">#05 · TIER 1</div>
+            <div class="card-name">データ駆動・自己定点観測型</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-profile">30〜40代・IT系・ライフログ好き</div>
+          <div class="card-trigger"><span>購入トリガー：</span>自己定量化への関心</div>
+          <div class="card-insight">「体のデータも記録したくて。スマートウォッチと連携させてる」</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TIER 2 -->
+  <div class="tier-block">
+    <div class="tier-label tier2-label">● TIER 2｜準コアターゲット（#6〜#12）</div>
+    <div class="persona-grid">
+
+      <div class="persona-card">
+        <div class="card-header">
+          <div class="card-avatar t2-av">👨‍👩‍👧</div>
+          <div class="card-meta">
+            <div class="card-id">#06 · TIER 2</div>
+            <div class="card-name">子どもの健康管理のための親</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-profile">40代親・購入者は親・使用者は子ども</div>
+          <div class="card-trigger"><span>購入トリガー：</span>子どもの肥満・成長管理への懸念</div>
+          <div class="card-insight">「子どもが太り気味で。家で測れるようにしたかった」</div>
+          <div class="card-note">※ 購入者と使用者が異なる構造</div>
+        </div>
+      </div>
+
+      <div class="persona-card">
+        <div class="card-header">
+          <div class="card-avatar t2-av">🗂️</div>
+          <div class="card-meta">
+            <div class="card-id">#07 · TIER 2</div>
+            <div class="card-name">データ収集・所有欲型</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-profile">30代・ガジェット好き・データを「持つこと」に価値を感じる</div>
+          <div class="card-trigger"><span>購入トリガー：</span>新製品・ガジェット欲求</div>
+          <div class="card-insight">「測定値を蓄積すること自体が楽しい。使うかどうかは別」</div>
+        </div>
+      </div>
+
+      <div class="persona-card">
+        <div class="card-header">
+          <div class="card-avatar t2-av">👴</div>
+          <div class="card-meta">
+            <div class="card-id">#08 · TIER 2</div>
+            <div class="card-name">シニア・老化予防型</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-profile">60〜70代・筋肉量の低下（サルコペニア）を気にし始めた</div>
+          <div class="card-trigger"><span>購入トリガー：</span>加齢・体力低下の自覚</div>
+          <div class="card-insight">「最近足腰が弱った気がして。筋肉量が測れると聞いて」</div>
+        </div>
+      </div>
+
+      <div class="persona-card">
+        <div class="card-header">
+          <div class="card-avatar t2-av">🔄</div>
+          <div class="card-meta">
+            <div class="card-id">#09 · TIER 2</div>
+            <div class="card-name">ダイエット挑戦・リバウンド経験型</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-profile">30〜40代女性・過去に複数回ダイエット経験あり</div>
+          <div class="card-trigger"><span>購入トリガー：</span>新たなダイエット開始</div>
+          <div class="card-insight">「今度こそちゃんと記録しながらやろうと思って」</div>
+        </div>
+      </div>
+
+      <div class="persona-card">
+        <div class="card-header">
+          <div class="card-avatar t2-av">🏢</div>
+          <div class="card-meta">
+            <div class="card-id">#10 · TIER 2</div>
+            <div class="card-name">転職・環境変化による体型変化型</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-profile">30代・転職やリモートワーク開始後に体重増加を実感</div>
+          <div class="card-trigger"><span>購入トリガー：</span>生活環境の変化</div>
+          <div class="card-insight">「在宅になってから太った。ちゃんと管理しようと思って」</div>
+        </div>
+      </div>
+
+      <div class="persona-card">
+        <div class="card-header">
+          <div class="card-avatar t2-av">🎁</div>
+          <div class="card-meta">
+            <div class="card-id">#11 · TIER 2</div>
+            <div class="card-name">ギフト購入型（贈り物）</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-profile">購入者と使用者が異なる・プレゼント目的</div>
+          <div class="card-trigger"><span>購入トリガー：</span>誕生日・父の日など贈答機会</div>
+          <div class="card-insight">「親の健康が心配で。プレゼントにしようと思って」</div>
+          <div class="card-note">※ 購入者と使用者が異なる構造</div>
+        </div>
+      </div>
+
+      <div class="persona-card">
+        <div class="card-header">
+          <div class="card-avatar t2-av">🤖</div>
+          <div class="card-meta">
+            <div class="card-id">#12 · TIER 2</div>
+            <div class="card-name">AI・アプリ連携による意思決定委任型</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-profile">30〜40代・アプリやAIに健康管理を任せたい</div>
+          <div class="card-trigger"><span>購入トリガー：</span>健康アプリとの連携目的</div>
+          <div class="card-insight">「自分で考えなくていいように、アプリに全部任せたい」</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TIER 3 -->
+  <div class="tier-block">
+    <div class="tier-label tier3-label">● TIER 3｜ニッチ・特殊動機層（#13〜#16）</div>
+    <div class="persona-grid">
+
+      <div class="persona-card">
+        <div class="card-header">
+          <div class="card-avatar t3-av">🏋️</div>
+          <div class="card-meta">
+            <div class="card-id">#13 · TIER 3</div>
+            <div class="card-name">競技アスリート・プロ志向型</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-profile">競技スポーツ選手・コーチ管理下</div>
+          <div class="card-trigger"><span>購入トリガー：</span>競技パフォーマンス管理</div>
+          <div class="card-insight">「体重制限のある競技で、体脂肪と筋肉量を細かく管理したい」</div>
+          <div class="card-note">※ マーケティング優先度は低め（ニッチ）</div>
+        </div>
+      </div>
+
+      <div class="persona-card">
+        <div class="card-header">
+          <div class="card-avatar t3-av">🤰</div>
+          <div class="card-meta">
+            <div class="card-id">#14 · TIER 3</div>
+            <div class="card-name">妊活・妊娠中の体重管理型</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-profile">妊活中・妊娠中の女性</div>
+          <div class="card-trigger"><span>購入トリガー：</span>妊娠・妊活という特殊な健康管理ニーズ</div>
+          <div class="card-insight">「妊娠中の体重増加を適切に管理したくて」</div>
+        </div>
+      </div>
+
+      <div class="persona-card">
+        <div class="card-header">
+          <div class="card-avatar t3-av">🧑‍⚕️</div>
+          <div class="card-meta">
+            <div class="card-id">#15 · TIER 3</div>
+            <div class="card-name">医療・介護従事者の業務利用型</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-profile">看護師・介護士・パーソナルトレーナー</div>
+          <div class="card-trigger"><span>購入トリガー：</span>業務上の必要性</div>
+          <div class="card-insight">「クライアントの体組成を定期的に測って記録するために」</div>
+        </div>
+      </div>
+
+      <div class="persona-card">
+        <div class="card-header">
+          <div class="card-avatar t3-av">📱</div>
+          <div class="card-meta">
+            <div class="card-id">#16 · TIER 3</div>
+            <div class="card-name">SNS・インフルエンサー発信型</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-profile">SNS発信者・ダイエット記録をコンテンツ化</div>
+          <div class="card-trigger"><span>購入トリガー：</span>コンテンツ制作・フォロワーへの発信</div>
+          <div class="card-insight">「数値を見せながら発信するとエンゲージメントが上がる」</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TIER 4 -->
+  <div class="tier-block">
+    <div class="tier-label tier4-label">● TIER 4｜倫理・UX設計用（#17〜#18）</div>
+    <div class="persona-grid">
+
+      <div class="persona-card">
+        <div class="card-header">
+          <div class="card-avatar t4-av">⚠️</div>
+          <div class="card-meta">
+            <div class="card-id">#17 · TIER 4</div>
+            <div class="card-name">摂食障害リスク型</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-profile">過度な体重・体脂肪へのこだわりがある</div>
+          <div class="card-trigger"><span>購入トリガー：</span>体型への強迫的な関心</div>
+          <div class="card-insight">「毎日何度も測らないと不安。数値が少し上がるだけで食事を抜く」</div>
+          <div class="card-note">⚠️ マーケティング利用不可・倫理設計・UX設計のみ参照</div>
+        </div>
+      </div>
+
+      <div class="persona-card">
+        <div class="card-header">
+          <div class="card-avatar t4-av">😔</div>
+          <div class="card-meta">
+            <div class="card-id">#18 · TIER 4</div>
+            <div class="card-name">非自発的使用者（強制ユーザー）</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-profile">家族に買われた・使わされている</div>
+          <div class="card-trigger"><span>購入トリガー：</span>自分の意思ではない</div>
+          <div class="card-insight">「妻が買ってきた。使えって言われるから一応測ってる」</div>
+          <div class="card-note">⚠️ 非購入者・継続利用設計・リテンション設計のみ参照</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ===== SECTION 5: セグメント設計 ===== -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">5</div>
+    <div>
+      <div class="section-title">調査セグメント設計（S1〜S5）</div>
+      <div class="section-subtitle">宿題ステップ2「整理の仕方」の結論——行動事実ベースの分類</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>このセグメントの特徴：</strong>
+    ペルソナ（仮説）ではなく、<strong>「何をしたか・何が起きたか」という行動事実</strong>で人を分類しています。これにより、実際のリクルーティング（調査対象者の募集）条件として使えます。
+  </div>
+
+  <h3 class="sub-title">設計の3つの軸</h3>
+  <div class="axis-grid">
+    <div class="axis-card">
+      <div class="ax-num">AXIS 1</div>
+      <div class="ax-title">購入トリガー</div>
+      <p style="font-size:12px; color:var(--muted); margin-bottom:10px;">なぜ買ったか（きっかけ）</p>
+      <div class="ax-tags">
+        <span class="ax-tag">健康イベント</span>
+        <span class="ax-tag">ライフイベント</span>
+        <span class="ax-tag">自発的動機</span>
+        <span class="ax-tag">不明・なんとなく</span>
+      </div>
+    </div>
+    <div class="axis-card">
+      <div class="ax-num">AXIS 2</div>
+      <div class="ax-title">使用継続性</div>
+      <p style="font-size:12px; color:var(--muted); margin-bottom:10px;">今も使っているか</p>
+      <div class="ax-tags">
+        <span class="ax-tag">アクティブ使用中</span>
+        <span class="ax-tag">休眠・離脱</span>
+        <span class="ax-tag">儀式化（習慣）</span>
+      </div>
+    </div>
+    <div class="axis-card">
+      <div class="ax-num">AXIS 3</div>
+      <div class="ax-title">購入・使用の主体関係</div>
+      <p style="font-size:12px; color:var(--muted); margin-bottom:10px;">誰が買って誰が使うか</p>
+      <div class="ax-tags">
+        <span class="ax-tag">自分で買って自分で使う</span>
+        <span class="ax-tag">代理購入</span>
+        <span class="ax-tag">強制使用者</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg-grid">
+
+    <div class="seg-card">
+      <div class="seg-head" style="background: linear-gradient(135deg, #1B4332, #2D6A4F);">
+        <div class="seg-id">S1</div>
+        <div>
+          <div class="seg-label">SEGMENT 1</div>
+          <div class="seg-title">健康イベント起点<br>× アクティブ使用</div>
+        </div>
+      </div>
+      <div class="seg-body">
+        <div class="seg-row"><div class="seg-lbl">トリガー</div><div>健康診断・医師の指導・疾患発覚</div></div>
+        <div class="seg-row"><div class="seg-lbl">使用状況</div><div>購入後も継続して使用中</div></div>
+        <div class="seg-row"><div class="seg-lbl">調査目的</div><div>「使い続ける理由」「何が価値になっているか」を深掘り</div></div>
+        <span class="priority-badge p-high">🔴 最優先セグメント</span>
+        <div class="seg-personas">
+          <div class="seg-p-label">対応する仮説ペルソナ</div>
+          <div class="chips">
+            <span class="chip" style="background:var(--tier1-bg); color:var(--tier1);">#01 健診ショック型</span>
+            <span class="chip" style="background:var(--tier1-bg); color:var(--tier1);">#04 慢性疾患型</span>
+            <span class="chip" style="background:var(--tier2-bg); color:var(--tier2);">#08 シニア型</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="seg-card">
+      <div class="seg-head" style="background: linear-gradient(135deg, #1D3557, #457B9D);">
+        <div class="seg-id">S2</div>
+        <div>
+          <div class="seg-label">SEGMENT 2</div>
+          <div class="seg-title">ライフ・自発動機<br>× アクティブ使用</div>
+        </div>
+      </div>
+      <div class="seg-body">
+        <div class="seg-row"><div class="seg-lbl">トリガー</div><div>出産・転職・ダイエット開始・筋トレ開始など</div></div>
+        <div class="seg-row"><div class="seg-lbl">使用状況</div><div>購入後も継続して使用中</div></div>
+        <div class="seg-row"><div class="seg-lbl">調査目的</div><div>ライフイベントと購買の関係・継続使用の動機</div></div>
+        <span class="priority-badge p-high">🔴 最優先セグメント</span>
+        <div class="seg-personas">
+          <div class="seg-p-label">対応する仮説ペルソナ</div>
+          <div class="chips">
+            <span class="chip" style="background:var(--tier1-bg); color:var(--tier1);">#02 産後型</span>
+            <span class="chip" style="background:var(--tier1-bg); color:var(--tier1);">#03 筋トレ型</span>
+            <span class="chip" style="background:var(--tier1-bg); color:var(--tier1);">#05 データ駆動型</span>
+            <span class="chip" style="background:var(--tier2-bg); color:var(--tier2);">#09 ダイエット型</span>
+            <span class="chip" style="background:var(--tier2-bg); color:var(--tier2);">#10 環境変化型</span>
+            <span class="chip" style="background:var(--tier2-bg); color:var(--tier2);">#12 AI連携型</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="seg-card">
+      <div class="seg-head" style="background: linear-gradient(135deg, #7D5A00, #B5860D);">
+        <div class="seg-id">S3</div>
+        <div>
+          <div class="seg-label">SEGMENT 3</div>
+          <div class="seg-title">任意トリガー<br>× 休眠・離脱</div>
+        </div>
+      </div>
+      <div class="seg-body">
+        <div class="seg-row"><div class="seg-lbl">トリガー</div><div>問わない（どんな理由で買っても）</div></div>
+        <div class="seg-row"><div class="seg-lbl">使用状況</div><div>購入後3ヶ月以上使っていない</div></div>
+        <div class="seg-row"><div class="seg-lbl">調査目的</div><div>「なぜ使わなくなったか」→ 製品改善・継続設計のヒント</div></div>
+        <span class="priority-badge p-mid">🔵 製品改善インサイト</span>
+        <div class="seg-personas">
+          <div class="seg-p-label">対応する仮説ペルソナ</div>
+          <div class="chips">
+            <span class="chip" style="background:var(--tier2-bg); color:var(--tier2);">#07 データ収集型</span>
+            <span class="chip" style="background:var(--tier2-bg); color:var(--tier2);">#09 ダイエット型（離脱後）</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="seg-card">
+      <div class="seg-head" style="background: linear-gradient(135deg, #7D2E00, #C1440E);">
+        <div class="seg-id">S4</div>
+        <div>
+          <div class="seg-label">SEGMENT 4</div>
+          <div class="seg-title">代理購入者<br>（家族のために買った）</div>
+        </div>
+      </div>
+      <div class="seg-body">
+        <div class="seg-row"><div class="seg-lbl">購入主体</div><div>自分以外のために購入（子ども・親・配偶者）</div></div>
+        <div class="seg-row"><div class="seg-lbl">使用状況</div><div>問わない</div></div>
+        <div class="seg-row"><div class="seg-lbl">調査目的</div><div>購入意思決定の構造・「誰のために何を選ぶか」の理解</div></div>
+        <span class="priority-badge p-mid">🔵 購買構造インサイト</span>
+        <div class="seg-personas">
+          <div class="seg-p-label">対応する仮説ペルソナ</div>
+          <div class="chips">
+            <span class="chip" style="background:var(--tier2-bg); color:var(--tier2);">#06 子ども管理型（親）</span>
+            <span class="chip" style="background:var(--tier2-bg); color:var(--tier2);">#11 ギフト型</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="seg-card">
+      <div class="seg-head" style="background: linear-gradient(135deg, #3D2B4A, #6B5B7B);">
+        <div class="seg-id">S5</div>
+        <div>
+          <div class="seg-label">SEGMENT 5</div>
+          <div class="seg-title">非自発的使用者<br>（使わされている）</div>
+        </div>
+      </div>
+      <div class="seg-body">
+        <div class="seg-row"><div class="seg-lbl">購入主体</div><div>自分の意思ではなく使用している</div></div>
+        <div class="seg-row"><div class="seg-lbl">使用状況</div><div>渋々使用中・または放置</div></div>
+        <div class="seg-row"><div class="seg-lbl">調査目的</div><div>継続利用・エンゲージメント設計のヒント</div></div>
+        <span class="priority-badge p-design">⚪ UX・リテンション設計</span>
+        <div class="seg-personas">
+          <div class="seg-p-label">対応する仮説ペルソナ</div>
+          <div class="chips">
+            <span class="chip" style="background:var(--tier4-bg); color:var(--tier4);">#18 強制ユーザー型</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ===== SECTION 6: 対応マップ ===== -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">6</div>
+    <div>
+      <div class="section-title">ペルソナ × セグメント 対応マップ</div>
+      <div class="section-subtitle">仮説ペルソナ18名がどのセグメントに対応するか一覧</div>
+    </div>
+  </div>
+
+  <table class="map-table">
+    <thead>
+      <tr>
+        <th style="width:34%">ペルソナ</th>
+        <th style="width:12%">TIER</th>
+        <th style="width:14%">セグメント</th>
+        <th>調査での役割</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="tier-dot dot-t1"></span>#01 健診ショック後の危機感型</td><td>TIER 1</td><td>S1</td><td>健康イベント起点の中核仮説</td></tr>
+      <tr><td><span class="tier-dot dot-t1"></span>#02 産後リカバリー型</td><td>TIER 1</td><td>S2</td><td>ライフイベント起点の中核仮説</td></tr>
+      <tr><td><span class="tier-dot dot-t1"></span>#03 筋トレ・ボディメイク型</td><td>TIER 1</td><td>S2</td><td>自発動機の中核仮説</td></tr>
+      <tr><td><span class="tier-dot dot-t1"></span>#04 慢性疾患セルフ管理型</td><td>TIER 1</td><td>S1</td><td>医療起点の高関与仮説</td></tr>
+      <tr><td><span class="tier-dot dot-t1"></span>#05 データ駆動・自己定点観測型</td><td>TIER 1</td><td>S2</td><td>自発動機・継続使用の仮説</td></tr>
+      <tr><td><span class="tier-dot dot-t2"></span>#06 子どもの健康管理のための親</td><td>TIER 2</td><td>S4</td><td>代理購入構造の仮説</td></tr>
+      <tr><td><span class="tier-dot dot-t2"></span>#07 データ収集・所有欲型</td><td>TIER 2</td><td>S3</td><td>離脱リスク高・製品改善仮説</td></tr>
+      <tr><td><span class="tier-dot dot-t2"></span>#08 シニア・老化予防型</td><td>TIER 2</td><td>S1 / S2</td><td>加齢起点の健康管理仮説</td></tr>
+      <tr><td><span class="tier-dot dot-t2"></span>#09 ダイエット挑戦・リバウンド経験型</td><td>TIER 2</td><td>S2 / S3</td><td>継続・離脱両面の仮説</td></tr>
+      <tr><td><span class="tier-dot dot-t2"></span>#10 転職・環境変化による体型変化型</td><td>TIER 2</td><td>S2</td><td>ライフイベント起点の仮説</td></tr>
+      <tr><td><span class="tier-dot dot-t2"></span>#11 ギフト購入型</td><td>TIER 2</td><td>S4</td><td>代理購入・贈答構造の仮説</td></tr>
+      <tr><td><span class="tier-dot dot-t2"></span>#12 AI・アプリ連携型</td><td>TIER 2</td><td>S2</td><td>テクノロジー活用動機の仮説</td></tr>
+      <tr><td><span class="tier-dot dot-t3"></span>#13 競技アスリート型</td><td>TIER 3</td><td>S2（ニッチ）</td><td>特殊用途・優先度低</td></tr>
+      <tr><td><span class="tier-dot dot-t3"></span>#14 妊活・妊娠中型</td><td>TIER 3</td><td>S2（特殊）</td><td>特殊ライフイベント仮説</td></tr>
+      <tr><td><span class="tier-dot dot-t3"></span>#15 医療・介護従事者型</td><td>TIER 3</td><td>S2（業務用）</td><td>業務利用・BtoB的仮説</td></tr>
+      <tr><td><span class="tier-dot dot-t3"></span>#16 SNS・インフルエンサー型</td><td>TIER 3</td><td>S2（特殊）</td><td>発信動機の特殊仮説</td></tr>
+      <tr><td><span class="tier-dot dot-t4"></span>#17 摂食障害リスク型</td><td>TIER 4</td><td>—</td><td>⚠️ 倫理・UX設計のみ（調査対象外）</td></tr>
+      <tr><td><span class="tier-dot dot-t4"></span>#18 非自発的使用者</td><td>TIER 4</td><td>S5</td><td>リテンション・UX設計参照</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div class="footer">
+  <strong>体組成計 インサイト調査 設計レポート</strong><br>
+  仮説ペルソナ18名 · 調査セグメントS1〜S5 · 対象者設定の考え方<br>
+  <span style="opacity:0.5; font-size:12px; margin-top:8px; display:block;">このドキュメントは調査設計フェーズの共通認識資料です。ペルソナはすべて仮説であり、調査実施後に更新されます。</span>
+</div>
+
+</body>
+</html>
